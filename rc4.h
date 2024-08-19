@@ -1,9 +1,6 @@
 #ifndef RC4_H
 #define RC4_H
 
-#include <stdio.h>
-#include <string.h>
-
 // RC4 Encryption/Decryption function
 static void rc4(unsigned char* key, unsigned int keylen, unsigned char* data, unsigned int datalen) {
     unsigned char S[256];

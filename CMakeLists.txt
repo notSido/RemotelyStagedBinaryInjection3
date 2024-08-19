@@ -5,7 +5,10 @@ set(CMAKE_C_STANDARD 17)
 
 add_executable(RemotelyStagedBinaryInjection2 main.c
         debug.h
-        rc4.h)
+        rc4.h
+        enum.c
+        hollow.c
+        native.h)
 
 target_link_libraries(RemotelyStagedBinaryInjection2 wininet.lib)
 
