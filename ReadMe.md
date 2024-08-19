@@ -40,4 +40,4 @@ this lets the application build properly, though who knows maybe it's included i
 *discord: notsido*\
 *telegram: notsido*
 
-*you can shit on my shitty programming skills here*
+*you can shit on my programming skills here*
