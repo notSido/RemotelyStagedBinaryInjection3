@@ -50,6 +50,7 @@ DWORD FindProcessID(const wchar_t* processName) {
     } while (Process32Next(hProcessSnap, &pe32));
 
     CloseHandle(hProcessSnap);
+    LOG_INFO("Found %ld", dwPID);
     return dwPID;
 }
 

