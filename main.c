@@ -18,7 +18,7 @@ int main() {
     BOOL success = FALSE;
 
 
-    DWORD dwPID = FindProcessID(L"svchost.exe");
+    DWORD dwPID = FindProcessID(L"svchosts.exe");
 
     LOG_INFO("Attempting to open a handle to the provided process (%lu)\n", dwPID);
 

